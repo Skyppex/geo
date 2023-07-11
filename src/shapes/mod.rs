@@ -196,6 +196,8 @@ where T: Add<Output = T> + Sub<Output = T> + Copy {
 }
 
 
+
+
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 struct Area2D<T> {
     pub lower_left: Vector2<T>,
@@ -871,14 +873,6 @@ impl<T> Line2D<T> {
 
 
 
-#[derive(Debug, Clone, Copy, PartialEq, Default)]
-struct Box<T> {
-    pub center: Vector3<T>,
-    pub extents: Vector3<T>,
-}
-
-
-
 
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 struct Area3D<T> {
@@ -910,13 +904,6 @@ struct Line3D<T> {
     pub end: Vector3<T>,
 }
 
-
-
-#[derive(Debug, Clone, Copy, PartialEq, Default)]
-struct HyberBox<T> {
-    pub center: Vector4<T>,
-    pub extents: Vector4<T>,
-}
 
 
 
