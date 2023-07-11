@@ -197,7 +197,6 @@ where T: Add<Output = T> + Sub<Output = T> + Copy {
 
 
 
-
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 struct Area2D<T> {
     pub lower_left: Vector2<T>,
@@ -878,6 +877,235 @@ impl<T> Line2D<T> {
 struct Area3D<T> {
     pub lower_left: Vector3<T>,
     pub upper_right: Vector3<T>,
+}
+
+impl<T> Area3D<T> {
+    #[inline]
+    pub fn new(lower_left_x: T, lower_left_y: T, lower_left_z: T, upper_right_x: T, upper_right_y: T, upper_right_z: T) -> Self {
+        Self::new_vectors(Vector3::new(lower_left_x, lower_left_y, lower_left_z), Vector3::new(upper_right_x, upper_right_y, upper_right_z))
+    }
+    
+    #[inline]
+    pub fn new_vectors(lower_left: Vector3<T>, upper_right: Vector3<T>) -> Self {
+        Area3D { lower_left, upper_right }
+    }
+
+    #[inline]
+    pub fn set(&mut self, lower_left_x: T, lower_left_y: T, lower_left_z: T, upper_right_x: T, upper_right_y: T, upper_right_z: T) {
+        self.lower_left.x = lower_left_x;
+        self.lower_left.y = lower_left_y;
+        self.lower_left.z = lower_left_z;
+        self.upper_right.x = upper_right_x;
+        self.upper_right.y = upper_right_y;
+        self.upper_right.z = upper_right_z;
+    }
+
+    #[inline]
+    pub fn set_vectors(&mut self, lower_left: Vector3<T>, upper_right: Vector3<T>) {
+        self.lower_left = lower_left;
+        self.upper_right = upper_right;
+    }
+
+    #[inline]
+    pub fn get_x_min(&self) -> T
+    where T: Copy {
+        self.lower_left.x
+    }
+
+    #[inline]
+    pub fn set_x_min(&mut self, x_min: T)
+    where T: Copy {
+        self.lower_left.x = x_min;
+    }
+
+    #[inline]
+    pub fn get_x_max(&self) -> T
+    where T: Copy {
+        self.upper_right.x
+    }
+
+    #[inline]
+    pub fn set_x_max(&mut self, x_max: T)
+    where T: Copy {
+        self.upper_right.x = x_max;
+    }
+
+    #[inline]
+    pub fn get_y_min(&self) -> T
+    where T: Copy {
+        self.lower_left.y
+    }
+
+    #[inline]
+    pub fn set_y_min(&mut self, y_min: T)
+    where T: Copy {
+        self.lower_left.y = y_min;
+    }
+
+    #[inline]
+    pub fn get_y_max(&self) -> T
+    where T: Copy {
+        self.upper_right.y
+    }
+
+    #[inline]
+    pub fn set_y_max(&mut self, y_max: T)
+    where T: Copy {
+        self.upper_right.y = y_max;
+    }
+
+    #[inline]
+    pub fn get_z_min(&self) -> T
+    where T: Copy {
+        self.lower_left.z
+    }
+
+    #[inline]
+    pub fn set_z_min(&mut self, z_min: T)
+    where T: Copy {
+        self.lower_left.z = z_min;
+    }
+
+    #[inline]
+    pub fn get_z_max(&self) -> T
+    where T: Copy {
+        self.upper_right.z
+    }
+
+    #[inline]
+    pub fn set_z_max(&mut self, z_max: T)
+    where T: Copy {
+        self.upper_right.z = z_max;
+    }
+
+    #[inline]
+    pub fn get_width(&self) -> T
+    where T: Sub<Output = T> + Copy {
+        self.upper_right.x - self.lower_left.x
+    }
+
+    #[inline]
+    pub fn set_width(&mut self, width: T)
+    where T: AddAssign + SubAssign + Real {
+        let current_width = self.upper_right.x - self.lower_left.x;
+        let delta = current_width - width;
+        let half_delta = delta / (T::one() + T::one());
+        self.lower_left.x += half_delta;
+        self.upper_right.x -= half_delta;
+    }
+
+    #[inline]
+    pub fn get_height(&self) -> T
+    where T: Sub<Output = T> + Copy {
+        self.upper_right.y - self.lower_left.y
+    }
+
+    #[inline]
+    pub fn set_height(&mut self, height: T)
+    where T: AddAssign + SubAssign + Real {
+        let current_height = self.upper_right.y - self.lower_left.y;
+        let delta = current_height - height;
+        let half_delta = delta / (T::one() + T::one());
+        self.lower_left.y += half_delta;
+        self.upper_right.y -= half_delta;
+    }
+    
+    #[inline]
+    pub fn get_depth(&self) -> T
+    where T: Sub<Output = T> + Copy {
+        self.upper_right.z - self.lower_left.z
+    }
+
+    #[inline]
+    pub fn set_depth(&mut self, height: T)
+    where T: AddAssign + SubAssign + Real {
+        let current_height = self.upper_right.z - self.lower_left.z;
+        let delta = current_height - height;
+        let half_delta = delta / (T::one() + T::one());
+        self.lower_left.z += half_delta;
+        self.upper_right.z -= half_delta;
+    }
+    
+    #[inline]
+    pub fn get_size(&self) -> Vector3<T>
+    where T: Sub<Output = T> + Copy {
+        Vector3::new(self.upper_right.x - self.lower_left.x, self.upper_right.y - self.lower_left.y, self.upper_right.z - self.lower_left.z)
+    }
+
+    #[inline]
+    pub fn set_size(&mut self, size: Vector3<T>)
+    where T: AddAssign + SubAssign + Real {
+        let current_size = Vector3::new(self.upper_right.x - self.lower_left.x, self.upper_right.y - self.lower_left.y, self.upper_right.z - self.lower_left.z);
+        let delta = current_size - size;
+        let half_delta = delta / (T::one() + T::one());
+        self.lower_left += half_delta;
+        self.upper_right -= half_delta;
+    }
+
+    #[inline]
+    pub fn get_center(&self) -> Vector3<T>
+    where T: Real {
+        Vector3::new(
+        (self.lower_left.x + self.upper_right.x) / (T::one() + T::one()),
+        (self.lower_left.y + self.upper_right.y) / (T::one() + T::one()),
+        (self.lower_left.z + self.upper_right.z) / (T::one() + T::one()))
+    }
+
+    #[inline]
+    pub fn set_center(&mut self, center: Vector3<T>)
+    where T: AddAssign + Real {
+        let current_center = self.get_center();
+        let delta = center - current_center;
+        self.lower_left += delta;
+        self.upper_right += delta;
+    }
+
+    #[inline]
+    pub fn contains(&self, point: Vector3<T>) -> bool
+    where T: PartialOrd + Copy {
+        point.x >= self.lower_left.x &&
+        point.x <= self.upper_right.x &&
+        point.y >= self.lower_left.y &&
+        point.y <= self.upper_right.y &&
+        point.z >= self.lower_left.z &&
+        point.z <= self.upper_right.z
+    }
+
+    #[inline]
+    pub fn overlaps(&self, other: &Area3D<T>) -> bool
+    where T: PartialOrd + Copy {
+        self.lower_left.x < other.upper_right.x &&
+        self.upper_right.x > other.lower_left.x &&
+        self.lower_left.y < other.upper_right.y &&
+        self.upper_right.y > other.lower_left.y &&
+        self.lower_left.z < other.upper_right.z &&
+        self.upper_right.z > other.lower_left.z
+    }
+
+    #[inline]
+    pub fn overlaps_bounds(&self, bounds: &Bounds3D<T>) -> bool
+    where T: PartialOrd + Add<Output = T> + Sub<Output = T> + Copy {
+        self.lower_left.x < bounds.center.x + bounds.extents.x &&
+        self.upper_right.x > bounds.center.x - bounds.extents.x &&
+        self.lower_left.y < bounds.center.y + bounds.extents.y &&
+        self.upper_right.y > bounds.center.y - bounds.extents.y &&
+        self.lower_left.z < bounds.center.z + bounds.extents.z &&
+        self.upper_right.z > bounds.center.z - bounds.extents.z
+    }
+}
+
+impl<T> From<Bounds3D<T>> for Area3D<T>
+where T: Add<Output = T> + Sub<Output = T> + Copy {
+    #[inline]
+    fn from(bounds: Bounds3D<T>) -> Self {
+        Self::new(
+            bounds.center.x - bounds.extents.x,
+            bounds.center.y - bounds.extents.y,
+            bounds.center.z - bounds.extents.z,
+            bounds.center.x + bounds.extents.x,
+            bounds.center.y + bounds.extents.y,
+            bounds.center.z + bounds.extents.z)
+    }
 }
 
 
