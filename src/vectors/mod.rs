@@ -157,10 +157,12 @@ impl<T> Vector2<T> {
 
 impl<T> Vector2<T>
 where T: Float {
+    #[inline]
     pub fn positive_infinity() -> Self {
         Self { x: T::infinity(), y: T::infinity() }
     }
 
+    #[inline]
     pub fn negative_infinity() -> Self {
         Self { x: T::neg_infinity(), y: T::neg_infinity() }
     }
@@ -717,10 +719,12 @@ impl<T> Vector3<T> {
 
 impl<T> Vector3<T>
 where T: Float {
+    #[inline]
     pub fn positive_infinity() -> Self {
         Self { x: T::infinity(), y: T::infinity(), z: T::infinity() }
     }
 
+    #[inline]
     pub fn negative_infinity() -> Self {
         Self { x: T::neg_infinity(), y: T::neg_infinity(), z: T::neg_infinity() }
     }
@@ -1275,10 +1279,12 @@ impl<T> Vector4<T> {
 
 impl<T> Vector4<T>
 where T: Float {
+    #[inline]
     pub fn positive_infinity() -> Self {
         Self { x: T::infinity(), y: T::infinity(), z: T::infinity(), w: T::infinity() }
     }
 
+    #[inline]
     pub fn negative_infinity() -> Self {
         Self { x: T::neg_infinity(), y: T::neg_infinity(), z: T::neg_infinity(), w: T::neg_infinity() }
     }
