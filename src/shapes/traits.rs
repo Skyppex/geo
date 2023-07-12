@@ -6,7 +6,6 @@ use half::{f16, bf16};
 pub trait Pi<Output = Self> {
     type Output: Float;
     
-    #[inline]
     fn pi() -> Self::Output;
 }
 

@@ -2,6 +2,14 @@
 name = "geo"
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.70.0"
+authors = ["Brage Ingebrigtsen"]
+description = "A rudamentory geometry package to use for spacial data or trig related stuff."
+repository = "https://github.com/Skyppex/geo"
+license-file = "LICENSE"
+keywords = ["gamedev", "simulation", "spacial-data", "trigonometry", "higher-dimentions"]
+categories = ["data-structures", "game-development", "mathematics", "simulation", "algorithms"]
+readme = "README.md"
 
 [dependencies]
 num-traits = "0.2.15"

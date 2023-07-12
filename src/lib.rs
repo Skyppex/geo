@@ -1,4 +1,4 @@
-#![allow(unused, dead_code)]
+#![allow(dead_code)]
 
 pub mod vectors;
 pub mod shapes;

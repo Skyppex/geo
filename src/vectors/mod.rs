@@ -545,7 +545,7 @@ impl<T> IntoIterator for Vector2<T> {
 }
 
 impl<T> FromIterator<T> for Vector2<T>
-where T: Copy + Default {
+where T: Real {
     #[inline]
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         let mut iter = iter.into_iter();
@@ -555,10 +555,10 @@ where T: Copy + Default {
                 return Self { x, y };
             }
 
-            return Self { x, y: T::default() };
+            return Self { x, y: T::zero() };
         }
         
-        Self { x: T::default(), y: T::default() }
+        Self { x: T::zero(), y: T::zero() }
     }
 }
 
@@ -1110,10 +1110,10 @@ where T: Copy {
 }
 
 impl<T> From<Vector2<T>> for Vector3<T>
-where T: Default {
+where T: Real {
     #[inline]
     fn from(vector: Vector2<T>) -> Self {
-        Self { x: vector.x, y: vector.y, z: T::default() }
+        Self { x: vector.x, y: vector.y, z: T::zero() }
     }
 }
 
@@ -1136,7 +1136,7 @@ impl<T> IntoIterator for Vector3<T> {
 }
 
 impl<T> FromIterator<T> for Vector3<T>
-where T: Copy + Default {
+where T: Real {
     #[inline]
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         let mut iter = iter.into_iter();
@@ -1147,13 +1147,13 @@ where T: Copy + Default {
                     return Self { x, y, z };
                 }
 
-                return Self { x, y, z: T::default() };
+                return Self { x, y, z: T::zero() };
             }
 
-            return Self { x, y: T::default(), z: T::default() };
+            return Self { x, y: T::zero(), z: T::zero() };
         }
 
-        Self { x: T::default(), y: T::default(), z: T::default() }
+        Self { x: T::zero(), y: T::zero(), z: T::zero() }
     }
 }
 
@@ -1702,18 +1702,18 @@ where T: Copy {
 }
 
 impl<T> From<Vector2<T>> for Vector4<T>
-where T: Default {
+where T: Real {
     #[inline]
     fn from(vector: Vector2<T>) -> Self {
-        Self { x: vector.x, y: vector.y, z: T::default(), w: T::default() }
+        Self { x: vector.x, y: vector.y, z: T::zero(), w: T::zero() }
     }
 }
 
 impl<T> From<Vector3<T>> for Vector4<T>
-where T: Default {
+where T: Real {
     #[inline]
     fn from(vector: Vector3<T>) -> Self {
-        Self { x: vector.x, y: vector.y, z: vector.z, w: T::default() }
+        Self { x: vector.x, y: vector.y, z: vector.z, w: T::zero() }
     }
 }
 
@@ -1729,7 +1729,7 @@ impl<T> IntoIterator for Vector4<T> {
 }
 
 impl<T> FromIterator<T> for Vector4<T>
-where T: Copy + Default {
+where T: Real {
     #[inline]
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         let mut iter = iter.into_iter();
@@ -1741,16 +1741,16 @@ where T: Copy + Default {
                         return Self { x, y, z, w };
                     }
 
-                    return Self { x, y, z, w: T::default() };
+                    return Self { x, y, z, w: T::zero() };
                 }
 
-                return Self { x, y, z: T::default(), w: T::default() };
+                return Self { x, y, z: T::zero(), w: T::zero() };
             }
 
-            return Self { x, y: T::default(), z: T::default(), w: T::default() };
+            return Self { x, y: T::zero(), z: T::zero(), w: T::zero() };
         }
 
-        Self { x: T::default(), y: T::default(), z: T::default(), w: T::default() }
+        Self { x: T::zero(), y: T::zero(), z: T::zero(), w: T::zero() }
     }
 }
 
