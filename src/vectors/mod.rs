@@ -2,12 +2,27 @@ use std::ops::{DivAssign, Add, Mul, Neg, Index, IndexMut, Sub, Div, AddAssign, S
 
 use num_traits::{real::Real, Float};
 
+pub trait Vector: Index<usize> + IndexMut<usize> + Neg + Add + Sub + Mul + Div + AddAssign + SubAssign + MulAssign + DivAssign + Copy + Clone + Default {
+    type Component;
+
+    fn new() -> Self;
+    fn zero() -> Self;
+    fn one() -> Self;
+    fn get_at(&self, index: usize) -> Option<<Self as Vector>::Component>;
+}
+
 pub type Vector2f32 = Vector2<f32>;
 pub type Vector2f64 = Vector2<f64>;
+pub type Vector2i8 = Vector2<i8>;
+pub type Vector2i16 = Vector2<i16>;
 pub type Vector2i32 = Vector2<i32>;
 pub type Vector2i64 = Vector2<i64>;
+pub type Vector2i128 = Vector2<i128>;
+pub type Vector2u8 = Vector2<u8>;
+pub type Vector2u16 = Vector2<u16>;
 pub type Vector2u32 = Vector2<u32>;
 pub type Vector2u64 = Vector2<u64>;
+pub type Vector2u128 = Vector2<u128>;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Default)]
 pub struct Vector2<T> {
@@ -17,20 +32,8 @@ pub struct Vector2<T> {
 
 impl<T> Vector2<T> {
     #[inline]
-    pub fn new(x: T, y: T) -> Self {
+    pub fn new_comp(x: T, y: T) -> Self {
         Self { x, y }
-    }
-
-    #[inline]
-    pub fn zero() -> Self
-    where T: Real {
-        Self { x: T::zero(), y: T::zero() }
-    }
-
-    #[inline]
-    pub fn one() -> Self
-    where T: Real {
-        Self { x: T::one(), y: T::one() }
     }
 
     #[inline]
@@ -68,17 +71,17 @@ impl<T> Vector2<T> {
     where T: Real + DivAssign {
         Self::normalize(self)
     }
+    
+    #[inline]
+    pub fn magnitude(&self) -> T
+    where T: Real {
+        self.sqr_magnitude().sqrt()
+    }
 
     #[inline]
     pub fn sqr_magnitude(&self) -> T
     where T: Mul<Output = T> + Add<Output = T> + Copy {
         self.x * self.x + self.y * self.y
-    }
-
-    #[inline]
-    pub fn magnitude(&self) -> T
-    where T: Real {
-        self.sqr_magnitude().sqrt()
     }
 
     #[inline]
@@ -127,14 +130,8 @@ impl<T> Vector2<T> {
     }
 
     #[inline]
-    pub fn perpendicular(vector: Self) -> Self
-    where T: Neg<Output = T> {
-        Self { x: -vector.y, y: vector.x }
-    }
-
-    #[inline]
     pub fn move_towards(current: Self, target: Self, max_distance_delta: T) -> Self
-    where T:         
+    where T:
         DivAssign + MulAssign +
         Real + Copy {
         let mut movement = target - current;
@@ -151,6 +148,45 @@ impl<T> Vector2<T> {
             current + movement
         } else {
             target
+        }
+    }
+
+    #[inline]
+    pub fn perpendicular(vector: Self) -> Self
+    where T: Neg<Output = T> {
+        Self { x: -vector.y, y: vector.x }
+    }
+}
+
+impl<T> Vector for Vector2<T>
+where T: Real + Default + AddAssign + SubAssign + MulAssign + DivAssign {
+    type Component = T;
+
+    #[inline]
+    fn new() -> Self
+    where T: Default {
+        Self { x: T::default(), y: T::default() }
+    }
+
+    #[inline]
+    fn zero() -> Self
+    where T: Real {
+        Self { x: T::zero(), y: T::zero() }
+    }
+
+    #[inline]
+    fn one() -> Self
+    where T: Real {
+        Self { x: T::one(), y: T::one() }
+    }
+
+    #[inline]
+    fn get_at(&self, index: usize) -> Option<T>
+    where T: Copy {
+        match index {
+            0 => Some(self.x),
+            1 => Some(self.y),
+            _ => None
         }
     }
 }
@@ -519,15 +555,18 @@ where T: Copy + Default {
     }
 }
 
-
-
-
 pub type Vector3f32 = Vector3<f32>;
 pub type Vector3f64 = Vector3<f64>;
+pub type Vector3i8 = Vector3<i8>;
+pub type Vector3i16 = Vector3<i16>;
 pub type Vector3i32 = Vector3<i32>;
 pub type Vector3i64 = Vector3<i64>;
+pub type Vector3i128 = Vector3<i128>;
+pub type Vector3u8 = Vector3<u8>;
+pub type Vector3u16 = Vector3<u16>;
 pub type Vector3u32 = Vector3<u32>;
 pub type Vector3u64 = Vector3<u64>;
+pub type Vector3u128 = Vector3<u128>;
 
 #[derive(Debug, PartialEq, Clone, Copy, Default)]
 pub struct Vector3<T> {
@@ -536,23 +575,10 @@ pub struct Vector3<T> {
     pub z: T
 }
 
-
 impl<T> Vector3<T> {
     #[inline]
-    pub fn new(x: T, y: T, z: T) -> Self {
+    pub fn new_comp(x: T, y: T, z: T) -> Self {
         Self { x, y, z }
-    }
-
-    #[inline]
-    pub fn zero() -> Self
-    where T: Real {
-        Self { x: T::zero(), y: T::zero(), z: T::zero() }
-    }
-
-    #[inline]
-    pub fn one() -> Self
-    where T: Real {
-        Self { x: T::one(), y: T::one(), z: T::one() }
     }
 
     #[inline]
@@ -664,6 +690,30 @@ impl<T> Vector3<T> {
     }
 
     #[inline]
+    pub fn move_towards(current: Self, target: Self, max_distance_delta: T) -> Self
+    where T: 
+        DivAssign + MulAssign +
+        Real + Copy {
+        let mut movement = target - current;
+        let sqr_magnitude = movement.sqr_magnitude();
+
+        if sqr_magnitude > max_distance_delta * max_distance_delta {
+            let magnitude = sqr_magnitude.sqrt();
+            movement.x /= magnitude;
+            movement.y /= magnitude;
+            movement.z /= magnitude;
+
+            movement.x *= max_distance_delta;
+            movement.y *= max_distance_delta;
+            movement.z *= max_distance_delta;
+
+            current + movement
+        } else {
+            target
+        }
+    }
+
+    #[inline]
     pub fn cross(left: Self, right: Self) -> Self
     where T: Sub<Output = T> + Mul<Output = T> + Copy {
         Self {
@@ -688,31 +738,39 @@ impl<T> Vector3<T> {
 
     #[inline]
     pub fn project_on_plane(vector: Self, plane_normal: Self) -> Self
-    where T: Mul<Output = T> + Add<Output = T> + Div<Output = T> + Sub<Output = T> + Copy {
+    where T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Div<Output = T> + Copy {
         vector - Self::project(vector, plane_normal)
+    }
+}
+
+impl<T> Vector for Vector3<T>
+where T: Real + Default + AddAssign + SubAssign + MulAssign + DivAssign {
+    type Component = T;
+
+    fn new() -> Self {
+        Self { x: T::default(), y: T::default(), z: T::default()}
     }
 
     #[inline]
-    pub fn move_towards(current: Self, target: Self, max_distance_delta: T) -> Self
-    where T: 
-        DivAssign + MulAssign +
-        Real + Copy {
-        let mut movement = target - current;
-        let sqr_magnitude = movement.sqr_magnitude();
+    fn zero() -> Self
+    where T: Real {
+        Self { x: T::zero(), y: T::zero(), z: T::zero() }
+    }
 
-        if sqr_magnitude > max_distance_delta * max_distance_delta {
-            let magnitude = sqr_magnitude.sqrt();
-            movement.x /= magnitude;
-            movement.y /= magnitude;
-            movement.z /= magnitude;
+    #[inline]
+    fn one() -> Self
+    where T: Real {
+        Self { x: T::one(), y: T::one(), z: T::one() }
+    }
 
-            movement.x *= max_distance_delta;
-            movement.y *= max_distance_delta;
-            movement.z *= max_distance_delta;
-
-            current + movement
-        } else {
-            target
+    #[inline]
+    fn get_at(&self, index: usize) -> Option<T>
+    where T: Copy {
+        match index {
+            0 => Some(self.x),
+            1 => Some(self.y),
+            2 => Some(self.z),
+            _ => None
         }
     }
 }
@@ -1089,13 +1147,18 @@ where T: Copy + Default {
 
 
 
-
 pub type Vector4f32 = Vector4<f32>;
 pub type Vector4f64 = Vector4<f64>;
+pub type Vector4i8 = Vector4<i8>;
+pub type Vector4i16 = Vector4<i16>;
 pub type Vector4i32 = Vector4<i32>;
 pub type Vector4i64 = Vector4<i64>;
+pub type Vector4i128 = Vector4<i128>;
+pub type Vector4u8 = Vector4<u8>;
+pub type Vector4u16 = Vector4<u16>;
 pub type Vector4u32 = Vector4<u32>;
 pub type Vector4u64 = Vector4<u64>;
+pub type Vector4u128 = Vector4<u128>;
 
 #[derive(Debug, PartialEq, Clone, Copy, Default)]
 pub struct Vector4<T> {
@@ -1107,20 +1170,8 @@ pub struct Vector4<T> {
 
 impl<T> Vector4<T> {
     #[inline]
-    pub fn new(x: T, y: T, z: T, w: T) -> Self {
+    pub fn new_comp(x: T, y: T, z: T, w: T) -> Self {
         Self { x, y, z, w }
-    }
-
-    #[inline]
-    pub fn zero() -> Self
-    where T: Real {
-        Self { x: T::zero(), y: T::zero(), z: T::zero(), w: T::zero() }
-    }
-
-    #[inline]
-    pub fn one() -> Self
-    where T: Real {
-        Self { x: T::one(), y: T::one(), z: T::one(), w: T::one() }
     }
 
     #[inline]
@@ -1247,12 +1298,6 @@ impl<T> Vector4<T> {
     }
 
     #[inline]
-    pub fn project(vector: Self, normal: Self) -> Self
-    where T: Mul<Output = T> + Add<Output = T> + Div<Output = T> + Copy {
-        normal * Self::dot(vector, normal) / normal.sqr_magnitude()
-    }
-
-    #[inline]
     pub fn move_towards(current: Self, target: Self, max_distance_delta: T) -> Self
     where T: 
         DivAssign + MulAssign +
@@ -1273,6 +1318,45 @@ impl<T> Vector4<T> {
             current + movement
         } else {
             target
+        }
+    }
+
+    #[inline]
+    pub fn project(vector: Self, normal: Self) -> Self
+    where T: Add<Output = T> + Mul<Output = T> + Div<Output = T> + Copy {
+        normal * Self::dot(vector, normal) / normal.sqr_magnitude()
+    }
+}
+
+impl<T> Vector for Vector4<T>
+where T: Real + Default + AddAssign + SubAssign + MulAssign + DivAssign {
+    type Component = T;
+
+    fn new() -> Self {
+        Self { x: T::default(), y: T::default(), z: T::default(), w: T::default()}
+    }
+
+    #[inline]
+    fn zero() -> Self
+    where T: Real {
+        Self { x: T::zero(), y: T::zero(), z: T::zero(), w: T::zero() }
+    }
+
+    #[inline]
+    fn one() -> Self
+    where T: Real {
+        Self { x: T::one(), y: T::one(), z: T::one(), w: T::one() }
+    }
+
+    #[inline]
+    fn get_at(&self, index: usize) -> Option<T>
+    where T: Copy {
+        match index {
+            0 => Some(self.x),
+            1 => Some(self.y),
+            2 => Some(self.z),
+            3 => Some(self.w),
+            _ => None
         }
     }
 }
@@ -1659,7 +1743,7 @@ mod tests {
 
     #[test]
     fn vector2_set() {
-        let mut vector = Vector2::new(2, 2);
+        let mut vector = Vector2::new_comp(2, 2);
         vector.set(2, 3);
         assert_eq!(vector.x, 2);
         assert_eq!(vector.y, 3);
