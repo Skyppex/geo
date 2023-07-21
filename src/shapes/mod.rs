@@ -2,7 +2,7 @@ use std::ops::{Add, Div, Sub, AddAssign, SubAssign, Mul, DivAssign};
 
 use num_traits::real::Real;
 
-use crate::vectors::{Vector2, Vector3, Vector4};
+use crate::vectors::{Vector, Vector2, Vector3, Vector4};
 
 use self::traits::Pi;
 
@@ -46,7 +46,7 @@ impl<T> Rect<T> {
     #[inline]
     pub fn get_position(&self) -> Vector2<T>
     where T: Copy {
-        Vector2::new(self.x, self.y)
+        Vector2::new_comp(self.x, self.y)
     }
 
     #[inline]
@@ -59,7 +59,7 @@ impl<T> Rect<T> {
     #[inline]
     pub fn get_size(&self) -> Vector2<T>
     where T: Copy {
-        Vector2::new(self.width, self.height)
+        Vector2::new_comp(self.width, self.height)
     }
 
     #[inline]
@@ -73,7 +73,7 @@ impl<T> Rect<T> {
     pub fn get_center(&self) -> Vector2<T>
     where T: Real {
         let two = T::one() + T::one();
-        Vector2::new(self.x + self.width / two , self.y + self.height / two )
+        Vector2::new_comp(self.x + self.width / two, self.y + self.height / two)
     }
 
     #[inline]
@@ -206,7 +206,7 @@ struct Area2D<T> {
 impl<T> Area2D<T> {
     #[inline]
     pub fn new(lower_left_x: T, lower_left_y: T, upper_right_x: T, upper_right_y: T) -> Self {
-        Self::new_vectors(Vector2::new(lower_left_x, lower_left_y), Vector2::new(upper_right_x, upper_right_y))
+        Self::new_vectors(Vector2::new_comp(lower_left_x, lower_left_y), Vector2::new_comp(upper_right_x, upper_right_y))
     }
     
     #[inline]
@@ -311,13 +311,13 @@ impl<T> Area2D<T> {
     #[inline]
     pub fn get_size(&self) -> Vector2<T>
     where T: Sub<Output = T> + Copy {
-        Vector2::new(self.upper_right.x - self.lower_left.x, self.upper_right.y - self.lower_left.y)
+        Vector2::new_comp(self.get_width(), self.get_height())
     }
 
     #[inline]
     pub fn set_size(&mut self, size: Vector2<T>)
     where T: AddAssign + SubAssign + Real {
-        let current_size = Vector2::new(self.upper_right.x - self.lower_left.x, self.upper_right.y - self.lower_left.y);
+        let current_size = self.get_size();
         let delta = current_size - size;
         let half_delta = delta / (T::one() + T::one());
         self.lower_left += half_delta;
@@ -327,9 +327,8 @@ impl<T> Area2D<T> {
     #[inline]
     pub fn get_center(&self) -> Vector2<T>
     where T: Real {
-        Vector2::new(
-        (self.lower_left.x + self.upper_right.x) / (T::one() + T::one()),
-        (self.lower_left.y + self.upper_right.y) / (T::one() + T::one()))
+        let half_size = self.get_size() / (T::one() + T::one());
+        self.lower_left + half_size
     }
 
     #[inline]
@@ -413,7 +412,7 @@ impl<T> Bounds2D<T> {
     #[inline]
     pub fn new(center_x: T, center_y: T, extents_x: T, extents_y: T) -> Self
     where T: Copy {
-        Self::new_vectors(Vector2::new(center_x, center_y), Vector2::new(extents_x, extents_y))
+        Self::new_vectors(Vector2::new_comp(center_x, center_y), Vector2::new_comp(extents_x, extents_y))
     }
     
     #[inline]
@@ -517,14 +516,14 @@ impl<T> Bounds2D<T> {
     #[inline]
     pub fn get_size(&self) -> Vector2<T>
     where T: Add<Output = T> + Copy {
-        Vector2::new(self.extents.x + self.extents.x, self.extents.y + self.extents.y)
+        Vector2::new_comp(self.extents.x + self.extents.x, self.extents.y + self.extents.y)
     }
 
     #[inline]
     pub fn set_size(&mut self, size_x: T, size_y: T)
     where T: SubAssign + Copy + Real {
-        let current_size = Vector2::new(self.extents.x + self.extents.x, self.extents.y + self.extents.y);
-        let delta = current_size - Vector2::new(size_x, size_y);
+        let current_size = Vector2::new_comp(self.extents.x + self.extents.x, self.extents.y + self.extents.y);
+        let delta = current_size - Vector2::new_comp(size_x, size_y);
         let half_delta = delta / (T::one() + T::one());
         self.extents -= half_delta;
     }
@@ -607,7 +606,7 @@ struct Circle<T> {
 impl<T> Circle<T> {
     #[inline]
     pub fn new(center_x: T, center_y: T, radius: T) -> Circle<T> {
-        Self::new_vector(Vector2::new(center_x, center_y), radius)
+        Self::new_vector(Vector2::new_comp(center_x, center_y), radius)
     }
     
     #[inline]
@@ -661,7 +660,7 @@ impl<T> Circle<T> {
 
     #[inline]
     pub fn overlaps(&self, other: &Circle<T>) -> bool
-    where T: Add<Output = T> + Sub<Output = T> + Mul<Output = T> + PartialOrd + Copy {
+    where T: Real {
         let delta = other.center - self.center;
         let distance_squared = delta.sqr_magnitude();
         let radius_sum = self.radius + other.radius;
@@ -680,7 +679,7 @@ struct Line2D<T> {
 impl<T> Line2D<T> {
     #[inline]
     pub fn new(start_x: T, start_y: T, end_x: T, end_y: T) -> Line2D<T> {
-        Self::new_vectors(Vector2::new(start_x, start_y), Vector2::new(end_x, end_y))
+        Self::new_vectors(Vector2::new_comp(start_x, start_y), Vector2::new_comp(end_x, end_y))
     }
 
     #[inline]
@@ -882,7 +881,7 @@ struct Area3D<T> {
 impl<T> Area3D<T> {
     #[inline]
     pub fn new(lower_left_x: T, lower_left_y: T, lower_left_z: T, upper_right_x: T, upper_right_y: T, upper_right_z: T) -> Self {
-        Self::new_vectors(Vector3::new(lower_left_x, lower_left_y, lower_left_z), Vector3::new(upper_right_x, upper_right_y, upper_right_z))
+        Self::new_vectors(Vector3::new_comp(lower_left_x, lower_left_y, lower_left_z), Vector3::new_comp(upper_right_x, upper_right_y, upper_right_z))
     }
     
     #[inline]
@@ -1029,13 +1028,13 @@ impl<T> Area3D<T> {
     #[inline]
     pub fn get_size(&self) -> Vector3<T>
     where T: Sub<Output = T> + Copy {
-        Vector3::new(self.upper_right.x - self.lower_left.x, self.upper_right.y - self.lower_left.y, self.upper_right.z - self.lower_left.z)
+        Vector3::new_comp(self.upper_right.x - self.lower_left.x, self.upper_right.y - self.lower_left.y, self.upper_right.z - self.lower_left.z)
     }
 
     #[inline]
     pub fn set_size(&mut self, size: Vector3<T>)
     where T: AddAssign + SubAssign + Real {
-        let current_size = Vector3::new(self.upper_right.x - self.lower_left.x, self.upper_right.y - self.lower_left.y, self.upper_right.z - self.lower_left.z);
+        let current_size = Vector3::new_comp(self.upper_right.x - self.lower_left.x, self.upper_right.y - self.lower_left.y, self.upper_right.z - self.lower_left.z);
         let delta = current_size - size;
         let half_delta = delta / (T::one() + T::one());
         self.lower_left += half_delta;
@@ -1045,7 +1044,7 @@ impl<T> Area3D<T> {
     #[inline]
     pub fn get_center(&self) -> Vector3<T>
     where T: Real {
-        Vector3::new(
+        Vector3::new_comp(
         (self.lower_left.x + self.upper_right.x) / (T::one() + T::one()),
         (self.lower_left.y + self.upper_right.y) / (T::one() + T::one()),
         (self.lower_left.z + self.upper_right.z) / (T::one() + T::one()))
