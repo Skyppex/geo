@@ -5,3 +5,7 @@ edition = "2021"
 
 [dependencies]
 num-traits = "0.2.15"
+half = { version = "2.3.1", optional = true }
+
+[features]
+half = ["dep:half", "half/num-traits"]

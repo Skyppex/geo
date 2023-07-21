@@ -1,5 +1,7 @@
 use std::ops::{DivAssign, Add, Mul, Neg, Index, IndexMut, Sub, Div, AddAssign, SubAssign, MulAssign, Deref};
 
+#[cfg(feature = "half")]
+use half::{f16, bf16};
 use num_traits::{real::Real, Float};
 
 pub trait Vector: Index<usize> + IndexMut<usize> + Neg + Add + Sub + Mul + Div + AddAssign + SubAssign + MulAssign + DivAssign + Copy + Clone + Default {
@@ -10,6 +12,11 @@ pub trait Vector: Index<usize> + IndexMut<usize> + Neg + Add + Sub + Mul + Div +
     fn one() -> Self;
     fn get_at(&self, index: usize) -> Option<<Self as Vector>::Component>;
 }
+
+#[cfg(feature = "half")]
+pub type Vector2f16 = Vector2<f16>;
+#[cfg(feature = "half")]
+pub type Vector2bf16 = Vector2<bf16>;
 
 pub type Vector2f32 = Vector2<f32>;
 pub type Vector2f64 = Vector2<f64>;
@@ -554,6 +561,11 @@ where T: Copy + Default {
         Self { x: T::default(), y: T::default() }
     }
 }
+
+#[cfg(feature = "half")]
+pub type Vector3f16 = Vector3<f16>;
+#[cfg(feature = "half")]
+pub type Vector3bf16 = Vector3<bf16>;
 
 pub type Vector3f32 = Vector3<f32>;
 pub type Vector3f64 = Vector3<f64>;
@@ -1146,6 +1158,11 @@ where T: Copy + Default {
 }
 
 
+
+#[cfg(feature = "half")]
+pub type Vector4f16 = Vector4<f16>;
+#[cfg(feature = "half")]
+pub type Vector4bf16 = Vector4<bf16>;
 
 pub type Vector4f32 = Vector4<f32>;
 pub type Vector4f64 = Vector4<f64>;
