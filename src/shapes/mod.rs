@@ -4,9 +4,7 @@ use num_traits::real::Real;
 
 use crate::vectors::{Vector, Vector2, Vector3, Vector4};
 
-use self::traits::Pi;
-
-mod traits;
+use super::traits::Pi;
 
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 struct Rect<T> {
