@@ -993,7 +993,7 @@ impl<T> Line2D<T> {
         num = d*ay;
         let y = p1.y + num / f;
 
-        Some(Vector2::new(x, y))
+        Some(Vector2::new_comp(x, y))
     }
 }
 
@@ -1057,7 +1057,7 @@ impl<T> Cube<T> {
     #[inline]
     pub fn get_position(&self) -> Vector3<T>
     where T: Copy {
-        Vector3::new(self.x, self.y, self.z)
+        Vector3::new_comp(self.x, self.y, self.z)
     }
 
     #[inline]
@@ -1071,7 +1071,7 @@ impl<T> Cube<T> {
     #[inline]
     pub fn get_size(&self) -> Vector3<T>
     where T: Copy {
-        Vector3::new(self.width, self.height, self.depth)
+        Vector3::new_comp(self.width, self.height, self.depth)
     }
 
     #[inline]
@@ -1086,7 +1086,7 @@ impl<T> Cube<T> {
     pub fn get_center(&self) -> Vector3<T>
     where T: Real {
         let two = T::one() + T::one();
-        Vector3::new(self.x + self.width / two , self.y + self.height / two, self.z + self.depth / two)
+        Vector3::new_comp(self.x + self.width / two , self.y + self.height / two, self.z + self.depth / two)
     }
 
     #[inline]
@@ -1500,7 +1500,7 @@ impl<T> Bounds3D<T> {
     #[inline]
     pub fn new(center_x: T, center_y: T, center_z: T, extents_x: T, extents_y: T, extents_z: T) -> Self
     where T: Copy {
-        Self::new_vectors(Vector3::new(center_x, center_y,  center_z), Vector3::new(extents_x, extents_y, extents_z))
+        Self::new_vectors(Vector3::new_comp(center_x, center_y,  center_z), Vector3::new_comp(extents_x, extents_y, extents_z))
     }
     
     #[inline]
@@ -1645,14 +1645,14 @@ impl<T> Bounds3D<T> {
     #[inline]
     pub fn get_size(&self) -> Vector3<T>
     where T: Add<Output = T> + Copy {
-        Vector3::new(self.extents.x + self.extents.x, self.extents.y + self.extents.y, self.extents.z + self.extents.z)
+        Vector3::new_comp(self.extents.x + self.extents.x, self.extents.y + self.extents.y, self.extents.z + self.extents.z)
     }
 
     #[inline]
     pub fn set_size(&mut self, size_x: T, size_y: T, size_z: T)
     where T: SubAssign + Copy + Real {
-        let current_size = Vector3::new(self.extents.x + self.extents.x, self.extents.y + self.extents.y, self.extents.z + self.extents.z);
-        let delta = current_size - Vector3::new(size_x, size_y, size_z);
+        let current_size = Vector3::new_comp(self.extents.x + self.extents.x, self.extents.y + self.extents.y, self.extents.z + self.extents.z);
+        let delta = current_size - Vector3::new_comp(size_x, size_y, size_z);
         let half_delta = delta / (T::one() + T::one());
         self.extents -= half_delta;
     }
@@ -1772,7 +1772,7 @@ struct Sphere<T> {
 impl<T> Sphere<T> {
     #[inline]
     pub fn new(center_x: T, center_y: T, center_z: T, radius: T) -> Self {
-        Self::new_vector(Vector3::new(center_x, center_y, center_z), radius)
+        Self::new_vector(Vector3::new_comp(center_x, center_y, center_z), radius)
     }
     
     #[inline]
@@ -1865,7 +1865,7 @@ struct Line3D<T> {
 impl<T> Line3D<T> {
     #[inline]
     pub fn new(start_x: T, start_y: T, start_z: T, end_x: T, end_y: T, end_z: T) -> Self {
-        Self::new_vectors(Vector3::new(start_x, start_y, start_z), Vector3::new(end_x, end_y, end_z))
+        Self::new_vectors(Vector3::new_comp(start_x, start_y, start_z), Vector3::new_comp(end_x, end_y, end_z))
     }
 
     #[inline]
@@ -1976,8 +1976,8 @@ impl<T> Area4D<T> {
     #[inline]
     pub fn new(lower_left_x: T, lower_left_y: T, lower_left_z: T, lower_left_w: T, upper_right_x: T, upper_right_y: T, upper_right_z: T, upper_right_w: T) -> Self {
         Self::new_vectors(
-            Vector4::new(lower_left_x, lower_left_y, lower_left_z, lower_left_w),
-            Vector4::new(upper_right_x, upper_right_y, upper_right_z, upper_right_w))
+            Vector4::new_comp(lower_left_x, lower_left_y, lower_left_z, lower_left_w),
+            Vector4::new_comp(upper_right_x, upper_right_y, upper_right_z, upper_right_w))
     }
     
     #[inline]
@@ -2166,13 +2166,13 @@ impl<T> Area4D<T> {
     #[inline]
     pub fn get_size(&self) -> Vector4<T>
     where T: Sub<Output = T> + Copy {
-        Vector4::new(self.upper_right.x - self.lower_left.x, self.upper_right.y - self.lower_left.y, self.upper_right.z - self.lower_left.z, self.upper_right.w - self.lower_left.w)
+        Vector4::new_comp(self.upper_right.x - self.lower_left.x, self.upper_right.y - self.lower_left.y, self.upper_right.z - self.lower_left.z, self.upper_right.w - self.lower_left.w)
     }
 
     #[inline]
     pub fn set_size(&mut self, size: Vector4<T>)
     where T: AddAssign + SubAssign + Real {
-        let current_size = Vector4::new(
+        let current_size = Vector4::new_comp(
             self.upper_right.x - self.lower_left.x,
             self.upper_right.y - self.lower_left.y,
             self.upper_right.z - self.lower_left.z,
@@ -2187,7 +2187,7 @@ impl<T> Area4D<T> {
     #[inline]
     pub fn get_center(&self) -> Vector4<T>
     where T: Real {
-        Vector4::new(
+        Vector4::new_comp(
         (self.lower_left.x + self.upper_right.x) / (T::one() + T::one()),
         (self.lower_left.y + self.upper_right.y) / (T::one() + T::one()),
         (self.lower_left.z + self.upper_right.z) / (T::one() + T::one()),
@@ -2270,8 +2270,8 @@ impl<T> Bounds4D<T> {
     pub fn new(center_x: T, center_y: T, center_z: T, center_w: T, extents_x: T, extents_y: T, extents_z: T, extents_w: T) -> Self
     where T: Copy {
         Self::new_vectors(
-            Vector4::new(center_x, center_y,  center_z, center_w),
-            Vector4::new(extents_x, extents_y, extents_z, extents_w))
+            Vector4::new_comp(center_x, center_y,  center_z, center_w),
+            Vector4::new_comp(extents_x, extents_y, extents_z, extents_w))
     }
     
     #[inline]
@@ -2457,7 +2457,7 @@ impl<T> Bounds4D<T> {
     #[inline]
     pub fn get_size(&self) -> Vector4<T>
     where T: Add<Output = T> + Copy {
-        Vector4::new(
+        Vector4::new_comp(
             self.extents.x + self.extents.x,
             self.extents.y + self.extents.y,
             self.extents.z + self.extents.z,
@@ -2467,8 +2467,8 @@ impl<T> Bounds4D<T> {
     #[inline]
     pub fn set_size(&mut self, size_x: T, size_y: T, size_z: T, size_w: T)
     where T: SubAssign + Copy + Real {
-        let current_size = Vector4::new(self.extents.x + self.extents.x, self.extents.y + self.extents.y, self.extents.z + self.extents.z, self.extents.w + self.extents.w);
-        let delta = current_size - Vector4::new(size_x, size_y, size_z, size_w);
+        let current_size = Vector4::new_comp(self.extents.x + self.extents.x, self.extents.y + self.extents.y, self.extents.z + self.extents.z, self.extents.w + self.extents.w);
+        let delta = current_size - Vector4::new_comp(size_x, size_y, size_z, size_w);
         let half_delta = delta / (T::one() + T::one());
         self.extents -= half_delta;
     }
@@ -2540,7 +2540,7 @@ struct HyperSphere<T> {
 impl<T> HyperSphere<T> {
     #[inline]
     pub fn new(center_x: T, center_y: T, center_z: T, center_w: T, radius: T) -> Self {
-        Self::new_vector(Vector4::new(center_x, center_y, center_z, center_w), radius)
+        Self::new_vector(Vector4::new_comp(center_x, center_y, center_z, center_w), radius)
     }
     
     #[inline]
@@ -2614,8 +2614,8 @@ impl<T> Line4D<T> {
     #[inline]
     pub fn new(start_x: T, start_y: T, start_z: T, start_w: T, end_x: T, end_y: T, end_z: T, end_w: T) -> Self {
         Self::new_vectors(
-            Vector4::new(start_x, start_y, start_z, start_w),
-            Vector4::new(end_x, end_y, end_z, end_w))
+            Vector4::new_comp(start_x, start_y, start_z, start_w),
+            Vector4::new_comp(end_x, end_y, end_z, end_w))
     }
 
     #[inline]
