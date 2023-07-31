@@ -1,13 +1,12 @@
 use std::ops::{DivAssign, Add, Mul, Neg, Index, IndexMut, Sub, Div, AddAssign, SubAssign, MulAssign, Deref};
+use num_traits::{real::Real, Float};
 
 #[cfg(feature = "half")]
 use half::{f16, bf16};
-use num_traits::{real::Real, Float};
 
 pub trait Vector: Index<usize> + IndexMut<usize> + Neg + Add + Sub + Mul + Div + AddAssign + SubAssign + MulAssign + DivAssign + Copy + Clone + Default {
     type Component;
 
-    fn new() -> Self;
     fn zero() -> Self;
     fn one() -> Self;
     fn get_at(&self, index: usize) -> Option<<Self as Vector>::Component>;
@@ -38,6 +37,12 @@ pub struct Vector2<T> {
 }
 
 impl<T> Vector2<T> {
+    #[inline]
+    fn new() -> Self
+    where T: Default {
+        Self { x: T::default(), y: T::default() }
+    }
+
     #[inline]
     pub fn new_comp(x: T, y: T) -> Self {
         Self { x, y }
@@ -168,13 +173,6 @@ impl<T> Vector2<T> {
 impl<T> Vector for Vector2<T>
 where T: Real + Default + AddAssign + SubAssign + MulAssign + DivAssign {
     type Component = T;
-
-    #[inline]
-    fn new() -> Self
-    where T: Default {
-        Self { x: T::default(), y: T::default() }
-    }
-
     #[inline]
     fn zero() -> Self
     where T: Real {
@@ -588,6 +586,11 @@ pub struct Vector3<T> {
 }
 
 impl<T> Vector3<T> {
+    fn new() -> Self
+    where T: Default {
+        Self { x: T::default(), y: T::default(), z: T::default()}
+    }
+
     #[inline]
     pub fn new_comp(x: T, y: T, z: T) -> Self {
         Self { x, y, z }
@@ -758,11 +761,6 @@ impl<T> Vector3<T> {
 impl<T> Vector for Vector3<T>
 where T: Real + Default + AddAssign + SubAssign + MulAssign + DivAssign {
     type Component = T;
-
-    fn new() -> Self {
-        Self { x: T::default(), y: T::default(), z: T::default()}
-    }
-
     #[inline]
     fn zero() -> Self
     where T: Real {
@@ -1186,6 +1184,11 @@ pub struct Vector4<T> {
 }
 
 impl<T> Vector4<T> {
+    fn new() -> Self
+    where T: Default {
+        Self { x: T::default(), y: T::default(), z: T::default(), w: T::default()}
+    }
+
     #[inline]
     pub fn new_comp(x: T, y: T, z: T, w: T) -> Self {
         Self { x, y, z, w }
@@ -1348,11 +1351,6 @@ impl<T> Vector4<T> {
 impl<T> Vector for Vector4<T>
 where T: Real + Default + AddAssign + SubAssign + MulAssign + DivAssign {
     type Component = T;
-
-    fn new() -> Self {
-        Self { x: T::default(), y: T::default(), z: T::default(), w: T::default()}
-    }
-
     #[inline]
     fn zero() -> Self
     where T: Real {
