@@ -2,7 +2,7 @@ use std::ops::{Add, Sub, Mul, AddAssign, SubAssign, DivAssign};
 
 use num_traits::real::Real;
 
-use crate::vectors::{Vector, Vector2, Vector3, Vector4};
+use crate::vectors::{Vector2, Vector3, Vector4};
 
 use super::traits::Pi;
 
